@@ -3,26 +3,36 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
+
         try {
             Restaurant restaurant = new Restaurant(askNameRestaurant());
-            while (restaurant.howManyClientsWeHave() < restaurant.getCapacity()) {
+            while (checkCapacity(restaurant)) {
                 addClients(restaurant);
+                if (wantToCleanTable()) {
+                    onCostumerLeave(restaurant);
+                }
             }
-            if (wantToCleanTable()) {
-             cleanTable(restaurant);
-            }
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
     }
 
-    private static void cleanTable(Restaurant restaurant) throws Exception {
+    private static boolean checkCapacity(Restaurant restaurant) {
+        return restaurant.howManyClientsWeHave() < restaurant.getCapacity();
+    }
 
-            showClientsInRestaurant(restaurant);
-            restaurant.cleanTable();
-            showClientsInRestaurant(restaurant);
+    private static void onCostumerLeave(Restaurant restaurant) throws Exception {
+        showClientsInRestaurant(restaurant);
+        int numTable = whichTableWantToClean();
+        restaurant.cleanTable(numTable);
+        showClientsInRestaurant(restaurant);
+    }
 
+    private static int whichTableWantToClean() {
+        System.out.println("Which table want to clean?");
+        return new Scanner(System.in).nextInt();
     }
 
     private static boolean wantToCleanTable() {
@@ -32,10 +42,12 @@ public class Main {
 
 
     private static void showClientsInRestaurant(Restaurant restaurant) {
+        int cont = 0;
         for (Table currentTable : restaurant.getTables()) {
-            System.out.println(currentTable);
-
+            System.out.println("Table " + cont + ": " + currentTable);
+            cont++;
         }
+        System.out.println("\n");
     }
 
     private static void addClients(Restaurant restaurant) throws Exception {
